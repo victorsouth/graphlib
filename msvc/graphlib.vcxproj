@@ -132,6 +132,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\graphlib\graph.h" />
+    <ClInclude Include="test_batches.h" />
+    <ClInclude Include="test_graph.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\testing\testing.cpp" />
