@@ -18,10 +18,10 @@
     <ClInclude Include="..\graphlib\graph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="test_batches.h">
+    <ClInclude Include="..\testing\test_graph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="test_graph.h">
+    <ClInclude Include="..\testing\test_batches.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
