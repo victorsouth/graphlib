@@ -19,19 +19,7 @@ protected:
     typedef composite_layer_t<target_var_t, specific_data_t> layer_t;
 protected:
     ///// @brief Параметры трубы
-    //PipeProperties pipe_1;
-    //PipeProperties pipe_2;
-    //PipeProperties pipe_3;
-    ///// @brief Профиль расхода
-    //vector<double> Q_1;
-    //vector<double> Q_2;
-    //vector<double> Q_3;
-    //std::unique_ptr<PipeQAdvection> advection_model_1;
-    //std::unique_ptr<PipeQAdvection> advection_model_2;
-    //std::unique_ptr<PipeQAdvection> advection_model_3;
-    //std::unique_ptr<custom_buffer_t<layer_t>> buffer_1;
-    //std::unique_ptr<custom_buffer_t<layer_t>> buffer_2;
-    //std::unique_ptr<custom_buffer_t<layer_t>> buffer_3;
+
     vector <PipeProperties> pipes;
     vector<vector<double>> Q;
     vector <PipeQAdvection> models;
@@ -80,11 +68,6 @@ protected:
         for (size_t index = 0; index < pipes.size(); ++index) {
             buffers.emplace_back(2, pipes[index].profile.getPointCount());
         }
-
-        //for (size_t index = 0; index < pipes.size(); ++index) {
-        //    prevs.emplace_back(buffers[index].previous());
-        //}
-        //       prev.vars.cell_double[0] = vector<double>(prev.vars.cell_double[0].size(), 850);
     }
 };
 
@@ -119,9 +102,6 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
     double dt_ideal = abs(dx / v);
     double Cr = 1;
 
-    //std::unique_ptr<custom_buffer_t<layer_t>> buffer;
-    //std::unique_ptr<PipeQAdvection> advection_model;
-
     double t = 0; // текущее время
     //double dt = 60; // 1 минута
     double dt = Cr * dt_ideal; // время в долях от Куранта
@@ -130,7 +110,6 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
 
     std::map<size_t, vector<double>> vertices_density;
 
-    //for (size_t vertex = 0; vertex < n_vertex; ++vertex) {
     for (size_t index = 0; index < N; ++index) {
         for (size_t vertex : V) {
 
@@ -156,44 +135,11 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
             vertices_density[vertex].push_back(density_vertex);
 
             for (const auto& edge : E.out) {
-                // для vertex определить ребра, которые в него входят, из них взять выходные плотности, смешать        
-                // для vertex определить ребра, которые ИЗ него ВЫХОДЯТ, 
-                // то что намешал использовать как граничное условие расчета для QUICKEST
-                
-                //std::stringstream filename;
-                //filename << path << "output " << edge << " Cr=" << Cr << ".csv";
-                //std::ofstream output(filename.str());
-
-            
-                //if (index == 0) {
-                //    prevs[edge] = buffers[edge].previous();
-                //    prevs[edge].vars.print(t, output);
-                //}
-
-                //for (const auto& vert : vertices) {
-                //    if (vert.first == vertex) { // Поиск текущей вершины.
-                //        if (vert.second.in.empty()) { // Если у текущей вершины нет входных рёбер
-                //            Rho_smesi = rho_in_1; // то должны быть начальные условия
-                //        }
-                //        else {
-                //            double Summ_Rho_Q = 0;
-                //            double Summ_Q = 0;
-                //            for (const auto& j : vert.second.in) { // Проход по всем входящим ребрам
-                //                Summ_Rho_Q = Summ_Rho_Q + (nexts[j].vars.cell_double[0][nexts[j].vars.cell_double[0].size() - 1] * Q[j][Q[j].size() - 1]);
-                //                Summ_Q = Summ_Q + (Q[j][Q[j].size() - 1]);
-                //            }
-                //            Rho_smesi = Summ_Rho_Q / Summ_Q;
-                //        }
-                //    }
-                //}
 
                 double density_vertex_out = -1; // фиктивное краевое условие на выходе ребра
 
                 quickest_ultimate_fv_solver solver(models[edge], buffers[edge]);
                 solver.step(dt, density_vertex, density_vertex_out);
-
-                //output.flush();
-                //output.close();
 
             }
         }
