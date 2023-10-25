@@ -32,3 +32,5 @@
 *.app
 /msvc/.vs/*
 /msvc/x64/*
+/msvc/new_SIKN_pchip.csv
+/msvc/sikn_c.csv
