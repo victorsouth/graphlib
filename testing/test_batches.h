@@ -7,6 +7,68 @@ using graphlib::graph_t;
 
 using namespace std;
 
+struct timeseries_data {
+    vector<double> density_in;
+    vector<double> density_out;
+    vector<double> volflow_in;
+    vector<double> volflow_out;
+    timeseries_data(const char* filename = "sikn_c.csv")
+    {
+        std::ifstream file(filename); // Открываем файл для чтения
+        std::string line;
+
+        std::vector<std::vector<double>> data;
+
+        while (getline(file, line)) {
+            std::stringstream ss(line);
+            std::string value;
+            size_t k = 0;
+            while (getline(ss, value, ',')) {
+                if (k == data.size()) { // Если вектора для столбца ещё нет, создаём его
+                    data.emplace_back();
+                }
+                data[k].push_back(std::stod(value)); // Записываем значение в столбец
+                k++; //1825
+            }
+        }
+
+        file.close();
+
+        density_in = data[1];
+        density_out = data[0];
+        volflow_in = data[3];
+        volflow_out = data[2];
+
+        for (double& q : volflow_in) {
+            q /= 3600;
+        }
+        for (double& q : volflow_out) {
+            q /= 3600;
+        }
+
+    }
+    /// @brief Возвращает Dt, гарантирующий, что по всем трубам системы 
+    /// не будет Cr > 1
+    /// Пока что очень частное решение на основе одной трубы
+    /// @param data 
+    /// @return 
+    double calc_ideal_dt(vector <PipeQAdvection>& models) const {
+        //double v = models[1].getEquationsCoeffs(0, 0); // !!! В РУЧНУЮ ДЛЯ 1-ого РЕБРА
+        auto it = std::max_element(volflow_in.begin(), volflow_in.end(), 
+            [](double q1, double q2) {
+                return abs(q1) < abs(q2);
+            });
+
+        double Q_max = abs(*it);
+
+        double v_max = Q_max / models[1].get_pipe().wall.getArea();
+        const auto& x = models[1].get_grid();
+        double dx = x[1] - x[0];
+
+        double dt_ideal = dx / v_max;
+        return dt_ideal;
+    }
+};
 
 /// @brief Тесты (ТУ) для солвера quickest_ultimate_fv_solver
 class QUICKEST_ULTIMATE_TU : public ::testing::Test {
@@ -37,13 +99,13 @@ protected:
         simple_pipe_properties simple_pipe_1;
         simple_pipe_properties simple_pipe_2;
         simple_pipe_properties simple_pipe_3;
-        simple_pipe_1.length = 168e3;
-        simple_pipe_2.length = 100e3;
+        simple_pipe_1.length = 100e3;
+        simple_pipe_2.length = 168e3;
         simple_pipe_3.length = 263e3;
         //simple_pipe.length = 700e3; // тест трубы 700км
-        simple_pipe_1.diameter = 0.1;
-        simple_pipe_2.diameter = 0.1;
-        simple_pipe_3.diameter = 0.1;
+        simple_pipe_1.diameter = 1;
+        simple_pipe_2.diameter = 1;
+        simple_pipe_3.diameter = 1;
         //simple_pipe.diameter = 0.514; // тест трубы 700км
         simple_pipe_1.dx = 1000;
         simple_pipe_2.dx = 1000;
@@ -55,7 +117,7 @@ protected:
 
         pipes = vector <PipeProperties>{ pipe_1, pipe_2, pipe_3 };
 
-        vector<double> vol_flows{0.5, 0.2, 0.3};
+        vector<double> vol_flows{0, 2, 2};
         for (size_t index = 0; index < pipes.size(); ++index) {
             Q.emplace_back(vector<double>(pipes[index].profile.getPointCount(),
                 vol_flows[index]));
@@ -69,13 +131,17 @@ protected:
             buffers.emplace_back(2, pipes[index].profile.getPointCount());
         }
     }
+
+
 };
 
 /// @brief Проверка QUICKEST-ULTIMATE, проверка изменения плотности после тройника смешения
 TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
 
-    string path = prepare_test_folder();
+    //string path = prepare_test_folder();
 
+    timeseries_data data;
+    
     std::map<size_t, double> boundaries {
         { 0, 870},
         { 2, -1 },
@@ -91,26 +157,35 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
     double T = 300000; // период моделирования
     //double T = 800000; // период моделирования (тест трубы 700км)
 
-    vector<edge_t> edges{ edge_t(1, 2), edge_t(0, 1), edge_t(1, 3) };
+    vector<edge_t> edges{ edge_t(1, 2), edge_t(0, 1), edge_t(1, 3) }; //!! Изменение порядка рёбер влияет на порядок начальных условий
     graph_t g(edges);
     auto [V, E] = g.topological_sort();
     auto vertices = g.get_vertices();
 
-    const auto& x = models[0].get_grid();
-    double dx = x[1] - x[0];
-    double v = models[0].getEquationsCoeffs(0, 0);
-    double dt_ideal = abs(dx / v);
+    double dt_ideal = data.calc_ideal_dt(models);
+
     double Cr = 1;
 
     double t = 0; // текущее время
     //double dt = 60; // 1 минута
-    double dt = Cr * dt_ideal; // время в долях от Куранта
+    //double dt = Cr * dt_ideal; // время в долях от Куранта
+    double dt = 300; // время по реальным данным
     size_t N = static_cast<int>(T / dt);
 
 
     std::map<size_t, vector<double>> vertices_density;
 
     for (size_t index = 0; index < N; ++index) {
+        
+        // Учет краевых условий и расходов на новом шаге
+        for (size_t i = 1; i < pipes.size(); ++i) { // Костыль
+            double q_pipe = i == 1
+                ? data.volflow_in[index]
+                : data.volflow_out[index];
+            Q[i] = vector<double>(pipes[i].profile.getPointCount(), q_pipe);
+        }
+        boundaries[0] = data.density_in[index];
+
         for (size_t vertex : V) {
 
             const auto& E = vertices[vertex];
@@ -148,6 +223,7 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
         for (auto& buffer : buffers) {
             buffer.advance(+1);
         }
+
     }
 
 }
