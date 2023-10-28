@@ -138,7 +138,7 @@ protected:
 /// @brief Проверка QUICKEST-ULTIMATE, проверка изменения плотности после тройника смешения
 TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
 
-    //string path = prepare_test_folder();
+    string path = prepare_test_folder();
 
     timeseries_data data;
     
@@ -154,7 +154,7 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
         }
     }
 
-    double T = 300000; // период моделирования
+    double T = 1200000; // период моделирования
     //double T = 800000; // период моделирования (тест трубы 700км)
 
     vector<edge_t> edges{ edge_t(1, 2), edge_t(0, 1), edge_t(1, 3) }; //!! Изменение порядка рёбер влияет на порядок начальных условий
@@ -171,7 +171,10 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
     //double dt = Cr * dt_ideal; // время в долях от Куранта
     double dt = 300; // время по реальным данным
     size_t N = static_cast<int>(T / dt);
-
+    
+    std::stringstream filename;
+    filename << path << "Rho" << ".csv";
+    std::ofstream output(filename.str());
 
     std::map<size_t, vector<double>> vertices_density;
 
@@ -220,10 +223,15 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
         }
         t += dt;
 
+        layer_t& next = buffers[2].current();
+        next.vars.print(t, output);
+
         for (auto& buffer : buffers) {
             buffer.advance(+1);
         }
 
     }
+    output.flush();
+    output.close();
 
 }
