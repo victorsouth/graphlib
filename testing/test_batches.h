@@ -20,7 +20,7 @@ protected:
 protected:
     ///// @brief Параметры трубы
 
-    vector <PipeProperties> pipes;
+    vector <pipe_properties_t> pipes;
     vector<vector<double>> Q;
     vector <PipeQAdvection> models;
     vector <custom_buffer_t<layer_t>> buffers;
@@ -49,11 +49,11 @@ protected:
         simple_pipe_2.dx = 1000;
         simple_pipe_3.dx = 1000;
         //simple_pipe.dx = 100; // тест трубы 700км
-        auto pipe_1 = PipeProperties::build_simple_pipe(simple_pipe_1);
-        auto pipe_2 = PipeProperties::build_simple_pipe(simple_pipe_2);
-        auto pipe_3 = PipeProperties::build_simple_pipe(simple_pipe_3);
+        auto pipe_1 = pipe_properties_t::build_simple_pipe(simple_pipe_1);
+        auto pipe_2 = pipe_properties_t::build_simple_pipe(simple_pipe_2);
+        auto pipe_3 = pipe_properties_t::build_simple_pipe(simple_pipe_3);
 
-        pipes = vector <PipeProperties>{ pipe_1, pipe_2, pipe_3 };
+        pipes = vector <pipe_properties_t>{ pipe_1, pipe_2, pipe_3 };
 
         vector<double> vol_flows{0.5, 0.2, 0.3};
         for (size_t index = 0; index < pipes.size(); ++index) {
