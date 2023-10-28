@@ -82,7 +82,7 @@ struct task_network_propagation_data_t {
     vector<pipe_properties_t> pipes;
     vector<vector<double>> Q;
     vector<PipeQAdvection> models;
-    vector<custom_buffer_t<layer_t>> buffers;
+    vector<ring_buffer_t<layer_t>> buffers;
     vector<edge_t> edges;
 
     void init_buffers(double rho_initial)
