@@ -160,6 +160,7 @@ protected:
 
         double rho_initial = 850;
         net_data.init_buffers(rho_initial);
+    string path = prepare_test_folder();
 
     }
 
@@ -185,6 +186,21 @@ public:
         auto vertices = g.get_vertices();
 
         std::map<size_t, vector<double>> vertices_density;
+    double dt_ideal = data.calc_ideal_dt(models);
+
+    double Cr = 1;
+
+    double t = 0; // текущее время
+    //double dt = 60; // 1 минута
+    //double dt = Cr * dt_ideal; // время в долях от Куранта
+    double dt = 300; // время по реальным данным
+    size_t N = static_cast<int>(T / dt);
+    
+    std::stringstream filename;
+    filename << path << "Rho" << ".csv";
+    std::ofstream output(filename.str());
+
+    std::map<size_t, vector<double>> vertices_density;
 
         for (size_t vertex : V) {
 
@@ -257,6 +273,14 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
                 : data.volflow_out[index];
             net_data.Q[i] = vector<double>(net_data.pipes[i].profile.getPointCount(), q_pipe);
         }
+        t += dt;
+
+        layer_t& next = buffers[2].current();
+        next.vars.print(t, output);
+
+        for (auto& buffer : buffers) {
+            buffer.advance(+1);
+        }
         boundaries[0] = data.density_in[index];
 
         net_quickest_ultimate_solver solver(net_data);
@@ -265,5 +289,7 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
         net_data.advance_buffers();
         t += dt;
     }
+    output.flush();
+    output.close();
 
 }
