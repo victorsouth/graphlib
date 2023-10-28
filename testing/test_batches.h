@@ -237,24 +237,19 @@ TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
         { 3, -1 }
     };
 
-
     timeseries_data data;
     double dt_ideal = data.calc_ideal_dt(net_data.models);
     double dt = 300; // время по реальным данным
-    double Cr = 1;
+    double Cr = dt_ideal/dt;
 
     double T = 300000; // период моделирования
     //double T = 800000; // период моделирования (тест трубы 700км)
-
-    double t = 0; // текущее время
-    //double dt = 60; // 1 минута
-    //double dt = Cr * dt_ideal; // время в долях от Куранта
     size_t N = static_cast<int>(T / dt);
+    double t = 0; // текущее время
 
     std::stringstream filename;
     filename << path << "Rho" << ".csv";
     std::ofstream output(filename.str());
-
 
     for (size_t index = 0; index < N; ++index) {        
         // Учет краевых условий и расходов на новом шаге
