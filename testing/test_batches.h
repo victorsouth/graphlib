@@ -1,11 +1,14 @@
 ﻿#pragma once
+
+
 using graphlib::edge_t;
 using graphlib::graph_t;
-
-#include <fixed/fixed.h>
-#include <pde_solvers/pde_solvers.h>
-
+using graphlib::task_network_propagation_data_t;
+using graphlib::net_quickest_ultimate_solver;
 using namespace std;
+
+
+
 
 struct timeseries_data {
     vector<double> density_in;
@@ -70,84 +73,6 @@ struct timeseries_data {
     }
 };
 
-/// @brief Данные для инициализации расчета сети
-struct task_network_propagation_data_t {
-    // Профиль переменных
-    typedef quickest_ultimate_fv_solver_traits<1>::var_layer_data target_var_t;
-    typedef quickest_ultimate_fv_solver_traits<1>::specific_layer specific_data_t;
-
-    // Слой: переменных Vars + сколько угодно служебных Specific
-    typedef composite_layer_t<target_var_t, specific_data_t> layer_t;
-
-    vector<pipe_properties_t> pipes;
-    vector<vector<double>> Q;
-    vector<PipeQAdvection> models;
-    vector<ring_buffer_t<layer_t>> buffers;
-    vector<edge_t> edges;
-
-    void init_buffers(double rho_initial)
-    {
-        for (auto& buffer : buffers) {
-            for (double& rho : buffer.previous().vars.cell_double[0]) {
-                rho = rho_initial;
-            }
-        }
-    }
-
-    void advance_buffers()
-    {
-        for (auto& buffer : buffers) {
-            buffer.advance(+1);
-        }
-    }
-
-    /// @brief Генерирует простую сеть с разделением
-    static task_network_propagation_data_t default_data()
-    {
-        // Упрощенное задание трубы - 50км, с шагом разбиения для расчтной сетки 1км, диаметром 700мм
-        simple_pipe_properties simple_pipe_1;
-        simple_pipe_properties simple_pipe_2;
-        simple_pipe_properties simple_pipe_3;
-        simple_pipe_1.length = 100e3;
-        simple_pipe_2.length = 168e3;
-        simple_pipe_3.length = 263e3;
-        //simple_pipe.length = 700e3; // тест трубы 700км
-        simple_pipe_1.diameter = 1;
-        simple_pipe_2.diameter = 1;
-        simple_pipe_3.diameter = 1;
-        //simple_pipe.diameter = 0.514; // тест трубы 700км
-        simple_pipe_1.dx = 1000;
-        simple_pipe_2.dx = 1000;
-        simple_pipe_3.dx = 1000;
-        //simple_pipe.dx = 100; // тест трубы 700км
-        auto pipe_1 = pipe_properties_t::build_simple_pipe(simple_pipe_1);
-        auto pipe_2 = pipe_properties_t::build_simple_pipe(simple_pipe_2);
-        auto pipe_3 = pipe_properties_t::build_simple_pipe(simple_pipe_3);
-
-        task_network_propagation_data_t result;
-
-        result.pipes = vector <pipe_properties_t>{ pipe_1, pipe_2, pipe_3 };
-
-        vector<double> vol_flows{ 0, 2, 2 };
-        for (size_t index = 0; index < result.pipes.size(); ++index) {
-            result.Q.emplace_back(
-                vector<double>(result.pipes[index].profile.getPointCount(), vol_flows[index]));
-        }
-
-        for (size_t index = 0; index < result.pipes.size(); ++index) {
-            result.models.emplace_back(result.pipes[index], result.Q[index]);
-        }
-
-        for (size_t index = 0; index < result.pipes.size(); ++index) {
-            result.buffers.emplace_back(2, result.pipes[index].profile.getPointCount());
-        }
-
-        result.edges = vector<edge_t>{ 
-            edge_t(1, 2), edge_t(0, 1), edge_t(1, 3) }; //!! Изменение порядка рёбер влияет на порядок начальных условий
-
-        return result;
-    }
-};
 
 /// @brief Тесты (ТУ) для солвера quickest_ultimate_fv_solver
 class QUICKEST_ULTIMATE_TU : public ::testing::Test {
@@ -160,8 +85,6 @@ protected:
 
         double rho_initial = 850;
         net_data.init_buffers(rho_initial);
-    string path = prepare_test_folder();
-
     }
 
 
@@ -231,128 +154,6 @@ protected:
 
 };
 
-/// @brief Тесты (ТУ) для солвера quickest_ultimate_fv_solver ChangeDirection
-class QUICKEST_ULTIMATE_TU_CD : public ::testing::Test {
-protected:
-    // Профиль переменных
-    typedef quickest_ultimate_fv_solver_traits<1>::var_layer_data target_var_t;
-    typedef quickest_ultimate_fv_solver_traits<1>::specific_layer specific_data_t;
-
-    // Слой: переменных Vars + сколько угодно служебных Specific
-    typedef composite_layer_t<target_var_t, specific_data_t> layer_t;
-protected:
-    ///// @brief Параметры трубы
-
-    vector <pipe_properties_t> pipes;
-    vector<vector<double>> Q;
-    vector <PipeQAdvection> models;
-    vector <ring_buffer_t<layer_t>> buffers;
-    vector <layer_t> prevs;
-
-
-protected:
-
-    /// @brief Подготовка к расчету для семейства тестов
-    virtual void SetUp() override {
-
-        // Упрощенное задание трубы - 50км, с шагом разбиения для расчтной сетки 1км, диаметром 700мм
-        simple_pipe_properties simple_pipe_1;
-        simple_pipe_properties simple_pipe_2;
-        simple_pipe_properties simple_pipe_3;
-        simple_pipe_1.length = 100e3;
-        simple_pipe_2.length = 168e3;
-        simple_pipe_3.length = 263e3;
-        //simple_pipe.length = 700e3; // тест трубы 700км
-        simple_pipe_1.diameter = 1;
-        simple_pipe_2.diameter = 1;
-        simple_pipe_3.diameter = 1;
-        //simple_pipe.diameter = 0.514; // тест трубы 700км
-        simple_pipe_1.dx = 1000;
-        simple_pipe_2.dx = 1000;
-        simple_pipe_3.dx = 1000;
-        //simple_pipe.dx = 100; // тест трубы 700км
-        auto pipe_1 = pipe_properties_t::build_simple_pipe(simple_pipe_1);
-        auto pipe_2 = pipe_properties_t::build_simple_pipe(simple_pipe_2);
-        auto pipe_3 = pipe_properties_t::build_simple_pipe(simple_pipe_3);
-
-        pipes = vector <pipe_properties_t>{ pipe_1, pipe_2, pipe_3 };
-
-        vector<double> vol_flows{2, 2, 4};
-        for (size_t index = 0; index < pipes.size(); ++index) {
-            Q.emplace_back(vector<double>(pipes[index].profile.getPointCount(),
-                vol_flows[index]));
-        }
-
-        for (size_t index = 0; index < pipes.size(); ++index) {
-            models.emplace_back(pipes[index], Q[index]);
-        }
-
-        for (size_t index = 0; index < pipes.size(); ++index) {
-            buffers.emplace_back(2, pipes[index].profile.getPointCount());
-        }
-    }
-
-
-};
-
-/// @brief Солвер сети 
-class net_quickest_ultimate_solver 
-{
-protected:
-    task_network_propagation_data_t& data;
-public:
-    net_quickest_ultimate_solver(task_network_propagation_data_t& data)
-        : data(data)
-    {
-
-    }
-    std::map<size_t, vector<double>> step(
-        double dt, const std::map<size_t, double>& boundaries)
-    {
-        graph_t g(data.edges);
-        auto [V, E] = g.topological_sort();
-        auto vertices = g.get_vertices();
-
-        std::map<size_t, vector<double>> vertices_density;
-
-        for (size_t vertex : V) {
-
-            const auto& E = vertices[vertex];
-
-            double density_vertex;
-            if (E.in.empty()) { // Если у текущей вершины нет входных рёбер
-                density_vertex = boundaries.at(vertex); // то должны быть начальные условия
-            }
-            else {
-                double Summ_Rho_Q = 0;
-                double Summ_Q = 0;
-                for (const auto& edg : E.in) { // если их 1 и больше, то ищем смесь
-                    const auto& current = data.buffers[edg].current().vars.cell_double[0];
-                    double rho_from_edge = current.back();
-                    double q_edge = data.Q[edg].back();
-                    Summ_Q += q_edge;
-                    Summ_Rho_Q += q_edge * rho_from_edge;
-                }
-                density_vertex = Summ_Rho_Q / Summ_Q;
-            }
-
-            vertices_density[vertex].push_back(density_vertex);
-
-            for (const auto& edge : E.out) {
-
-                double density_vertex_out = -1; // фиктивное краевое условие на выходе ребра
-
-                quickest_ultimate_fv_solver solver(data.models[edge], data.buffers[edge]);
-                solver.step(dt, density_vertex, density_vertex_out);
-
-            }
-        }
-        return vertices_density;
-    }
-
-
-
-};
 
 /// @brief Проверка QUICKEST-ULTIMATE, проверка изменения плотности после тройника смешения
 TEST_F(QUICKEST_ULTIMATE_TU, MixDensity) {
@@ -499,97 +300,3 @@ TEST_F(QUICKEST_ULTIMATE_TU_RE, RandomEdges) {
 
 }
 
-/// @brief Проверка QUICKEST-ULTIMATE, проверка изменения направления
-TEST_F(QUICKEST_ULTIMATE_TU_CD, ChangeDirection) {
-
-    string path = prepare_test_folder();
-
-    timeseries_data data;
-
-    std::map<size_t, double> boundaries {
-        { 0, 870},
-        { 2, -1 },
-        { 3, 870 }
-    };
-    double rho_initial = 850;
-    for (auto& buffer : buffers) {
-        for (double& rho : buffer.previous().vars.cell_double[0]) {
-            rho = rho_initial;
-        }
-    }
-
-    double T = 300000; // период моделирования
-
-    vector<edge_t> edges{ edge_t(1, 2), edge_t(1, 0), edge_t(3, 1) }; //!! Изменение порядка рёбер влияет на порядок начальных условий
-    graph_t g(edges);
-    auto [V, E] = g.topological_sort();
-    auto vertices = g.get_vertices();
-    double dt_ideal = data.calc_ideal_dt(models);
-
-    double t = 0; // текущее время
-    double dt = 300; // время по реальным данным
-    size_t N = static_cast<int>(T / dt);
-
-    std::stringstream filename;
-    filename << path << "Rho_5" << ".csv";
-    std::ofstream output(filename.str());
-
-    std::map<size_t, vector<double>> vertices_density;
-
-    for (size_t index = 0; index < N; ++index) {
-
-        // Учет краевых условий и расходов на новом шаге
-        for (size_t i = 1; i < pipes.size(); ++i) { // Костыль
-            double q_pipe = i == 2
-                ? data.volflow_in[index]
-                : data.volflow_out[index];
-            Q[i] = vector<double>(pipes[i].profile.getPointCount(), q_pipe);
-        }
-        boundaries[3] = data.density_in[index];
-
-        for (size_t vertex : V) {
-
-            const auto& E = vertices[vertex];
-
-            double density_vertex;
-            if (E.in.empty()) { // Если у текущей вершины нет входных рёбер
-                density_vertex = boundaries.at(vertex); // то должны быть начальные условия
-            }
-            else {
-                double Summ_Rho_Q = 0;
-                double Summ_Q = 0;
-                for (const auto& edg : E.in) { // если их 1 и больше, то ищем смесь
-                    const auto& current = buffers[edg].current().vars.cell_double[0];
-                    double rho_from_edge = current.back();
-                    double q_edge = Q[edg].back();
-                    Summ_Q += q_edge;
-                    Summ_Rho_Q += q_edge * rho_from_edge;
-                }
-                density_vertex = Summ_Rho_Q / Summ_Q;
-            }
-
-            vertices_density[vertex].push_back(density_vertex);
-
-            for (const auto& edge : E.out) {
-
-                double density_vertex_out = -1; // фиктивное краевое условие на выходе ребра
-
-                quickest_ultimate_fv_solver solver(models[edge], buffers[edge]);
-                solver.step(dt, density_vertex, density_vertex_out);
-
-            }
-        }
-        t += dt;
-
-        layer_t& next = buffers[1].current();
-        next.vars.print(t, output);
-
-        for (auto& buffer : buffers) {
-            buffer.advance(+1);
-        }
-
-    }
-    output.flush();
-    output.close();
-
-}

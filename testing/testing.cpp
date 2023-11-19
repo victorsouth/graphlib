@@ -7,7 +7,9 @@
 
 #include "gtest/gtest.h"
 #include <graphlib/graph.h>
-#include "test_graph.h"
+#include <graphlib/endogenous.h>
+
+#include "test_topological_sort.h"
 
 #include <fixed/fixed.h>
 #include <pde_solvers/pde_solvers.h>

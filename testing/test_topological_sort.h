@@ -4,7 +4,7 @@ using graphlib::edge_t;
 using graphlib::graph_t;
 
 
-TEST(graphlib, test)
+TEST(TopologicalSort, test)
 {
     vector<edge_t> edges{ edge_t(0, 1), edge_t(1, 2), edge_t(1, 3) };
 
@@ -13,7 +13,7 @@ TEST(graphlib, test)
     auto [V, E] = g.topological_sort();
 }
 
-TEST(graphlib, pump)
+TEST(TopologicalSort, pump)
 {
     vector<edge_t> edges{ edge_t(0, 1), edge_t(1, 3), edge_t(2, 1) };
 
@@ -22,7 +22,7 @@ TEST(graphlib, pump)
     auto [V, E] = g.topological_sort();
 }
 
-TEST(graphlib, pump_two_level)
+TEST(TopologicalSort, pump_two_level)
 {
     vector<edge_t> edges{ edge_t(0, 1), edge_t(1, 3), edge_t(2, 1), edge_t(4, 2) };
 
@@ -31,7 +31,7 @@ TEST(graphlib, pump_two_level)
     auto [V, E] = g.topological_sort();
 }
 
-TEST(graphlib, random_index)
+TEST(TopologicalSort, random_index)
 {
     vector<edge_t> edges{ edge_t(0, 100), edge_t(100, 2), edge_t(100, 3) };
 
@@ -40,7 +40,7 @@ TEST(graphlib, random_index)
     auto [V, E] = g.topological_sort();
 }
 
-TEST(graphlib, cycle)
+TEST(TopologicalSort, cycle)
 {
     vector<edge_t> edges{ edge_t(0, 1), edge_t(1, 2), edge_t(1, 3), edge_t(2, 3) };
 
@@ -49,7 +49,7 @@ TEST(graphlib, cycle)
     auto [V, E] = g.topological_sort();
 }
 
-TEST(graphlib, random_first_edge)
+TEST(TopologicalSort, random_first_edge)
 {
     vector<edge_t> edges{ edge_t(0, 1), edge_t(1, 2), edge_t(1, 3)};
 
@@ -58,7 +58,7 @@ TEST(graphlib, random_first_edge)
     auto [V, E] = g.topological_sort();
 }
 
-TEST(graphlib, corman)
+TEST(TopologicalSort, corman)
 {
     vector<edge_t> edges{ edge_t(1, 2), edge_t(2, 3), edge_t(3, 4), edge_t(1, 4)};// , edge_t(4, 2)};// , edge_t(5, 3), edge_t(5, 6)};
 

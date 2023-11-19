@@ -13,16 +13,22 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\GraphLib">
+      <UniqueIdentifier>{20c9b5d4-aa09-4b18-8c91-5ee56eaf91ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\graphlib\graph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\testing\test_graph.h">
+    <ClInclude Include="..\testing\test_topological_sort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\testing\test_batches.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graphlib\graph.h">
+      <Filter>Header Files\GraphLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graphlib\endogenous.h">
+      <Filter>Header Files\GraphLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

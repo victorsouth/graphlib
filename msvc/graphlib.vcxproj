@@ -134,9 +134,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\graphlib\endogenous.h" />
     <ClInclude Include="..\graphlib\graph.h" />
     <ClInclude Include="..\testing\test_batches.h" />
-    <ClInclude Include="..\testing\test_graph.h" />
+    <ClInclude Include="..\testing\test_topological_sort.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\testing\testing.cpp" />
