@@ -9,10 +9,9 @@
 #include <graphlib/graph.h>
 #include <graphlib/endogenous.h>
 
-#include "test_topological_sort.h"
+// Здесь юнит-тесты
+#include "unit_test/test_topological_sort.h"
 
-#include <fixed/fixed.h>
-#include <pde_solvers/pde_solvers.h>
 
 #include <iostream>
 #include <fstream>
@@ -34,7 +33,8 @@ inline std::string prepare_test_folder()
     return path;
 }
 
-#include "test_batches.h"
+// Здесь case_study
+#include "case_study/case_density_batches.h"
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

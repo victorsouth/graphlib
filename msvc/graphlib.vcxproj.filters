@@ -16,19 +16,25 @@
     <Filter Include="Header Files\GraphLib">
       <UniqueIdentifier>{20c9b5d4-aa09-4b18-8c91-5ee56eaf91ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\CaseStudy">
+      <UniqueIdentifier>{dec98892-d79b-49ec-8a62-3265dbdd068b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UnitTest">
+      <UniqueIdentifier>{da0009ee-a30b-42d7-b91e-323c2d7027a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\testing\test_topological_sort.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\testing\test_batches.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\graphlib\graph.h">
       <Filter>Header Files\GraphLib</Filter>
     </ClInclude>
     <ClInclude Include="..\graphlib\endogenous.h">
       <Filter>Header Files\GraphLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\testing\case_study\case_density_batches.h">
+      <Filter>Header Files\CaseStudy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\testing\unit_test\test_topological_sort.h">
+      <Filter>Header Files\UnitTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

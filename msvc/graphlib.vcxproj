@@ -136,8 +136,8 @@
   <ItemGroup>
     <ClInclude Include="..\graphlib\endogenous.h" />
     <ClInclude Include="..\graphlib\graph.h" />
-    <ClInclude Include="..\testing\test_batches.h" />
-    <ClInclude Include="..\testing\test_topological_sort.h" />
+    <ClInclude Include="..\testing\case_study\case_density_batches.h" />
+    <ClInclude Include="..\testing\unit_test\test_topological_sort.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\testing\testing.cpp" />
