@@ -32,9 +32,5 @@
 *.app
 /msvc/.vs/*
 /msvc/x64/*
-/msvc/new_SIKN_pchip.csv
-/msvc/sikn_c.csv
-/testing_out/QUICKEST_ULTIMATE_TU.MixDensity/Rho.csv
-/testing_out/QUICKEST_ULTIMATE_TU.MixDensity/Rho_finish_predict.xlsx
-/testing_out/QUICKEST_ULTIMATE_TU.MixDensity/Rho_u.csv
-/testing_out
+/msvc/*.csv
+/testing_out/*/*.csv
