@@ -32,3 +32,5 @@
 *.app
 /msvc/.vs/*
 /msvc/x64/*
+/msvc/*.csv
+/testing_out/*/*.csv
