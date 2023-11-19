@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include <queue>
 #include <vector>
@@ -13,11 +13,11 @@ using std::unordered_map;
 namespace graphlib {
 ;
 
-// Структура, представляющая ребро графа.
+// РЎС‚СЂСѓРєС‚СѓСЂР°, РїСЂРµРґСЃС‚Р°РІР»СЏСЋС‰Р°СЏ СЂРµР±СЂРѕ РіСЂР°С„Р°.
 struct edge_t {
     std::size_t from;
     std::size_t to; 
-    edge_t(std::size_t from, std::size_t to) // Конструктор с параметрами.
+    edge_t(std::size_t from, std::size_t to) // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РїР°СЂР°РјРµС‚СЂР°РјРё.
         : from(from)
         , to(to)
     {
@@ -25,7 +25,7 @@ struct edge_t {
     }
     edge_t() = default;
 };
-// Структура, представляющая вершину графа.
+// РЎС‚СЂСѓРєС‚СѓСЂР°, РїСЂРµРґСЃС‚Р°РІР»СЏСЋС‰Р°СЏ РІРµСЂС€РёРЅСѓ РіСЂР°С„Р°.
 struct vertex_t {
     vector<size_t> in;
     vector<size_t> out;
@@ -33,14 +33,14 @@ struct vertex_t {
 
 class graph_t 
 {
-    const vector<edge_t> edges; // Вектор ребер графа.
+    const vector<edge_t> edges; // Р’РµРєС‚РѕСЂ СЂРµР±РµСЂ РіСЂР°С„Р°.
 public:
-    graph_t(const vector<edge_t>& edges) // Конструктор с параметром.
+    graph_t(const vector<edge_t>& edges) // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РїР°СЂР°РјРµС‚СЂРѕРј.
         : edges(edges)
     {
 
     }
-    // Метод для получения вершин графа.
+    // РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РІРµСЂС€РёРЅ РіСЂР°С„Р°.
     unordered_map<size_t, vertex_t> get_vertices() const {
         unordered_map<size_t, vertex_t> result;
         for (size_t index = 0; index < edges.size(); ++index) {
@@ -54,46 +54,46 @@ public:
         return result;
     }
    
-    /// @brief Топологическая сортировка
-    /// @param _start_vertices Начальные вершины, откуда начинать обход
-    /// @return (Список пройденных вершин, Список пройденных ребер)
+    /// @brief РўРѕРїРѕР»РѕРіРёС‡РµСЃРєР°СЏ СЃРѕСЂС‚РёСЂРѕРІРєР°
+    /// @param _start_vertices РќР°С‡Р°Р»СЊРЅС‹Рµ РІРµСЂС€РёРЅС‹, РѕС‚РєСѓРґР° РЅР°С‡РёРЅР°С‚СЊ РѕР±С…РѕРґ
+    /// @return (РЎРїРёСЃРѕРє РїСЂРѕР№РґРµРЅРЅС‹С… РІРµСЂС€РёРЅ, РЎРїРёСЃРѕРє РїСЂРѕР№РґРµРЅРЅС‹С… СЂРµР±РµСЂ)
     std::pair<vector<size_t>, vector<size_t>>
         topological_sort() //const vector<size_t>& _start_vertices
     {   
 
-        //unordered_set<size_t> start_vertices(_start_vertices.begin(), _start_vertices.end());  // Создаем множество стартовых вершин из входящего вектора.        
-        //std::deque<size_t> bfs_queue(start_vertices.begin(), start_vertices.end()); // Создаем очередь для обхода в глубину, начиная с стартовых вершин.
-        // Инициализируем векторы для сохранения порядка вершин и ребер в топологической сортировке.
+        //unordered_set<size_t> start_vertices(_start_vertices.begin(), _start_vertices.end());  // РЎРѕР·РґР°РµРј РјРЅРѕР¶РµСЃС‚РІРѕ СЃС‚Р°СЂС‚РѕРІС‹С… РІРµСЂС€РёРЅ РёР· РІС…РѕРґСЏС‰РµРіРѕ РІРµРєС‚РѕСЂР°.        
+        //std::deque<size_t> bfs_queue(start_vertices.begin(), start_vertices.end()); // РЎРѕР·РґР°РµРј РѕС‡РµСЂРµРґСЊ РґР»СЏ РѕР±С…РѕРґР° РІ РіР»СѓР±РёРЅСѓ, РЅР°С‡РёРЅР°СЏ СЃ СЃС‚Р°СЂС‚РѕРІС‹С… РІРµСЂС€РёРЅ.
+        // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РІРµРєС‚РѕСЂС‹ РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ РїРѕСЂСЏРґРєР° РІРµСЂС€РёРЅ Рё СЂРµР±РµСЂ РІ С‚РѕРїРѕР»РѕРіРёС‡РµСЃРєРѕР№ СЃРѕСЂС‚РёСЂРѕРІРєРµ.
         vector<size_t> vertex_order; 
         vector<size_t> edge_order;
         
-        unordered_map<size_t, vertex_t> vertices = get_vertices(); // Получаем вершины графа.
+        unordered_map<size_t, vertex_t> vertices = get_vertices(); // РџРѕР»СѓС‡Р°РµРј РІРµСЂС€РёРЅС‹ РіСЂР°С„Р°.
 
         //
         vector<size_t> _start_vertices_indep;
         for (const auto& vertex : vertices) {
-            if (vertex.second.in.empty()) { // Если у вершины нет входящих ребер.
-                _start_vertices_indep.push_back(vertex.first); // Добавляем ее индекс в вектор _start_vertices.
+            if (vertex.second.in.empty()) { // Р•СЃР»Рё Сѓ РІРµСЂС€РёРЅС‹ РЅРµС‚ РІС…РѕРґСЏС‰РёС… СЂРµР±РµСЂ.
+                _start_vertices_indep.push_back(vertex.first); // Р”РѕР±Р°РІР»СЏРµРј РµРµ РёРЅРґРµРєСЃ РІ РІРµРєС‚РѕСЂ _start_vertices.
             }
         }
-        unordered_set<size_t> start_vertices(_start_vertices_indep.begin(), _start_vertices_indep.end());  // Создаем множество стартовых вершин из входящего вектора.        
-        std::deque<size_t> bfs_queue(start_vertices.begin(), start_vertices.end()); // Создаем очередь для обхода в глубину, начиная с стартовых вершин.
+        unordered_set<size_t> start_vertices(_start_vertices_indep.begin(), _start_vertices_indep.end());  // РЎРѕР·РґР°РµРј РјРЅРѕР¶РµСЃС‚РІРѕ СЃС‚Р°СЂС‚РѕРІС‹С… РІРµСЂС€РёРЅ РёР· РІС…РѕРґСЏС‰РµРіРѕ РІРµРєС‚РѕСЂР°.        
+        std::deque<size_t> bfs_queue(start_vertices.begin(), start_vertices.end()); // РЎРѕР·РґР°РµРј РѕС‡РµСЂРµРґСЊ РґР»СЏ РѕР±С…РѕРґР° РІ РіР»СѓР±РёРЅСѓ, РЅР°С‡РёРЅР°СЏ СЃ СЃС‚Р°СЂС‚РѕРІС‹С… РІРµСЂС€РёРЅ.
         //
         
-        vector<bool> visited_edges(edges.size(), false); // Инициализируем вектор, чтобы отслеживать посещенные ребра
-        // Выполняем обход в ширину
+        vector<bool> visited_edges(edges.size(), false); // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РІРµРєС‚РѕСЂ, С‡С‚РѕР±С‹ РѕС‚СЃР»РµР¶РёРІР°С‚СЊ РїРѕСЃРµС‰РµРЅРЅС‹Рµ СЂРµР±СЂР°
+        // Р’С‹РїРѕР»РЅСЏРµРј РѕР±С…РѕРґ РІ С€РёСЂРёРЅСѓ
         while (!bfs_queue.empty()) {
-            // Получаем вершину из начала очереди.
+            // РџРѕР»СѓС‡Р°РµРј РІРµСЂС€РёРЅСѓ РёР· РЅР°С‡Р°Р»Р° РѕС‡РµСЂРµРґРё.
             size_t vertex = bfs_queue.front();
             bfs_queue.pop_front();          
-            vertex_order.push_back(vertex); // Добавляем вершину в вектор vertex_order.           
-            const vector<size_t>& out = vertices.at(vertex).out; // Получаем исходящие ребра текущей вершины.
-            // Перебираем исходящие ребра.
+            vertex_order.push_back(vertex); // Р”РѕР±Р°РІР»СЏРµРј РІРµСЂС€РёРЅСѓ РІ РІРµРєС‚РѕСЂ vertex_order.           
+            const vector<size_t>& out = vertices.at(vertex).out; // РџРѕР»СѓС‡Р°РµРј РёСЃС…РѕРґСЏС‰РёРµ СЂРµР±СЂР° С‚РµРєСѓС‰РµР№ РІРµСЂС€РёРЅС‹.
+            // РџРµСЂРµР±РёСЂР°РµРј РёСЃС…РѕРґСЏС‰РёРµ СЂРµР±СЂР°.
             for (size_t edge : out) {
-                visited_edges[edge] = true; // Помечаем ребро как посещенное.
-                edge_order.push_back(edge);  // Добавляем ребро в конец списка edge_order 
-                size_t to = edges[edge].to;  // Получаем вершину, в которую ведет данное ребро
-                // Проверяем, все ли входящие ребра в целевую вершину были посещены.
+                visited_edges[edge] = true; // РџРѕРјРµС‡Р°РµРј СЂРµР±СЂРѕ РєР°Рє РїРѕСЃРµС‰РµРЅРЅРѕРµ.
+                edge_order.push_back(edge);  // Р”РѕР±Р°РІР»СЏРµРј СЂРµР±СЂРѕ РІ РєРѕРЅРµС† СЃРїРёСЃРєР° edge_order 
+                size_t to = edges[edge].to;  // РџРѕР»СѓС‡Р°РµРј РІРµСЂС€РёРЅСѓ, РІ РєРѕС‚РѕСЂСѓСЋ РІРµРґРµС‚ РґР°РЅРЅРѕРµ СЂРµР±СЂРѕ
+                // РџСЂРѕРІРµСЂСЏРµРј, РІСЃРµ Р»Рё РІС…РѕРґСЏС‰РёРµ СЂРµР±СЂР° РІ С†РµР»РµРІСѓСЋ РІРµСЂС€РёРЅСѓ Р±С‹Р»Рё РїРѕСЃРµС‰РµРЅС‹.
                 bool to_has_visited_ins = true;  
                 for (size_t edge_in : vertices.at(to).in) { 
                     if (visited_edges[edge_in] == false) {
@@ -101,13 +101,13 @@ public:
                         break;
                     }
                 }
-                // Если вершина имеет все посещенные входящие ребра, то добавляем ее в конец очереди bfs_queue
+                // Р•СЃР»Рё РІРµСЂС€РёРЅР° РёРјРµРµС‚ РІСЃРµ РїРѕСЃРµС‰РµРЅРЅС‹Рµ РІС…РѕРґСЏС‰РёРµ СЂРµР±СЂР°, С‚Рѕ РґРѕР±Р°РІР»СЏРµРј РµРµ РІ РєРѕРЅРµС† РѕС‡РµСЂРµРґРё bfs_queue
                 if (to_has_visited_ins) {
                     bfs_queue.push_back(to);
                 }
             }
         }
-        // Возвращаем векторы vertex_order и edge_order.
+        // Р’РѕР·РІСЂР°С‰Р°РµРј РІРµРєС‚РѕСЂС‹ vertex_order Рё edge_order.
         return std::make_pair(std::move(vertex_order), std::move(edge_order));
     }
 

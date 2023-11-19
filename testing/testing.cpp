@@ -1,4 +1,4 @@
-
+п»ї
 
 #define GTEST_BREAK_ON_FAILURE 1
 #define GTEST_CATCH_EXCEPTIONS 0
@@ -16,15 +16,15 @@
 #include <fstream>
 #include <filesystem>
 
-/// @brief Возвращает тестовую строку в формате TestBundle.TestName
+/// @brief Р’РѕР·РІСЂР°С‰Р°РµС‚ С‚РµСЃС‚РѕРІСѓСЋ СЃС‚СЂРѕРєСѓ РІ С„РѕСЂРјР°С‚Рµ TestBundle.TestName
 inline std::string get_test_string() {
     auto test_info = ::testing::UnitTest::GetInstance()->current_test_info();
     auto test_string = std::string(test_info->test_case_name()) + "." + std::string(test_info->name());
     return test_string;
 }
 
-/// @brief Создает путь для теста в папке "<graphlib_root>/testing_out/"
-/// Возвращает путь к созданной папке
+/// @brief РЎРѕР·РґР°РµС‚ РїСѓС‚СЊ РґР»СЏ С‚РµСЃС‚Р° РІ РїР°РїРєРµ "<graphlib_root>/testing_out/"
+/// Р’РѕР·РІСЂР°С‰Р°РµС‚ РїСѓС‚СЊ Рє СЃРѕР·РґР°РЅРЅРѕР№ РїР°РїРєРµ
 inline std::string prepare_test_folder()
 {
     std::string path = std::string("../testing_out/") + get_test_string() + "/";
