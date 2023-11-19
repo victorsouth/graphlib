@@ -13,11 +13,14 @@ using std::unordered_map;
 namespace graphlib {
 ;
 
-// Структура, представляющая ребро графа.
+/// @brief Ребро графа. Описывает из какой вершины выходит, в какую приходит
 struct edge_t {
+    /// @brief Вершина, откуда ребро выходит
     std::size_t from;
+    /// @brief Вершина, куда ребро приходит
     std::size_t to; 
-    edge_t(std::size_t from, std::size_t to) // Конструктор с параметрами.
+    /// @brief Очевидный конструктор по двум вершинам
+    edge_t(std::size_t from, std::size_t to) 
         : from(from)
         , to(to)
     {
@@ -25,22 +28,29 @@ struct edge_t {
     }
     edge_t() = default;
 };
-// Структура, представляющая вершину графа.
+
+/// @brief Структуруа представляющая вершину графа,
+/// списки смежности входящих и выходящих ребер
 struct vertex_t {
+    /// @brief Список индексов ребер, входящих в вершину
     vector<size_t> in;
+    /// @brief Список индексов ребер, выходящих из вершины
     vector<size_t> out;
 };
 
-class graph_t 
-{
-    const vector<edge_t> edges; // Вектор ребер графа.
+/// @brief Граф, заданные списком смежности ребер
+class graph_t {
+    /// @brief Список смежности ребер графа
+    const vector<edge_t> edges;
 public:
     graph_t(const vector<edge_t>& edges) // Конструктор с параметром.
         : edges(edges)
     {
 
     }
-    // Метод для получения вершин графа.
+    /// @brief Возвращает список инцидентностей для вершин 
+    /// с учетом ориентации ребер
+    /// Без мемоизации!
     unordered_map<size_t, vertex_t> get_vertices() const {
         unordered_map<size_t, vertex_t> result;
         for (size_t index = 0; index < edges.size(); ++index) {
@@ -60,10 +70,6 @@ public:
     std::pair<vector<size_t>, vector<size_t>>
         topological_sort() //const vector<size_t>& _start_vertices
     {   
-
-        //unordered_set<size_t> start_vertices(_start_vertices.begin(), _start_vertices.end());  // Создаем множество стартовых вершин из входящего вектора.        
-        //std::deque<size_t> bfs_queue(start_vertices.begin(), start_vertices.end()); // Создаем очередь для обхода в глубину, начиная с стартовых вершин.
-        // Инициализируем векторы для сохранения порядка вершин и ребер в топологической сортировке.
         vector<size_t> vertex_order; 
         vector<size_t> edge_order;
         
