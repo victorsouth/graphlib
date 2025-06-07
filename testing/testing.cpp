@@ -6,6 +6,8 @@
 #define _VARIADIC_MAX 10 /* for gtest */
 
 #include "gtest/gtest.h"
+
+
 #include <graphlib/graph.h>
 #include <graphlib/endogenous.h>
 

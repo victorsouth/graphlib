@@ -3,6 +3,8 @@
 #include <fixed/fixed.h>
 #include <pde_solvers/pde_solvers.h>
 
+using namespace pde_solvers;
+
 namespace graphlib {
 ;
 
@@ -81,7 +83,7 @@ struct task_network_propagation_data_t {
         vector<double> vol_flows{ 0, 2, 2 };
         for (size_t index = 0; index < result.pipes.size(); ++index) {
             result.Q.emplace_back(
-                vector<double>(result.pipes[index].profile.getPointCount(), vol_flows[index]));
+                vector<double>(result.pipes[index].profile.get_point_count(), vol_flows[index]));
         }
 
         for (size_t index = 0; index < result.pipes.size(); ++index) {
@@ -89,7 +91,7 @@ struct task_network_propagation_data_t {
         }
 
         for (size_t index = 0; index < result.pipes.size(); ++index) {
-            result.buffers.emplace_back(2, result.pipes[index].profile.getPointCount());
+            result.buffers.emplace_back(2, result.pipes[index].profile.get_point_count());
         }
 
         result.edges = vector<edge_t>{

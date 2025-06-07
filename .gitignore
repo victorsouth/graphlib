@@ -34,3 +34,4 @@
 /msvc/x64/*
 /msvc/*.csv
 /testing_out/*/*.csv
+/msvc/graphlib/x64/Debug

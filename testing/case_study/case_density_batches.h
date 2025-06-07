@@ -121,7 +121,7 @@ TEST_F(DensityPropagation, MixDensity) {
             double q_pipe = i == 1
                 ? data.volflow_in[index]
                 : data.volflow_out[index];
-            net_data.Q[i] = vector<double>(net_data.pipes[i].profile.getPointCount(), q_pipe);
+            net_data.Q[i] = vector<double>(net_data.pipes[i].profile.get_point_count(), q_pipe);
         }
 
         auto& next = net_data.buffers[2].current();
