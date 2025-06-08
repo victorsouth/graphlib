@@ -101,10 +101,10 @@ TEST_F(DensityPropagation, MixDensity) {
         { 3, -1 }
     };
 
-    timeseries_data data;
+    timeseries_data data((path + "sikn_02_2024.csv").c_str());
     double dt_ideal = data.calc_ideal_dt(net_data.models);
     double dt = 300; // время по реальным данным
-    double Cr = dt_ideal/dt;
+    double Cr = dt/ dt_ideal;
 
     double T = 300000; // период моделирования
     //double T = 800000; // период моделирования (тест трубы 700км)
